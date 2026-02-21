@@ -1,0 +1,13 @@
+{
+  "domain": "quakehub",
+  "name": "QuakeHub",
+  "version": "0.0.0",
+  "documentation": "https://github.com/ervede/quakehub",
+  "requirements": ["aiohttp"],
+  "codeowners": ["@ervede"],
+  "iot_class": "cloud_polling",
+  "config_flow": true,
+  "loggers": ["quakehub"],
+  "logo": "logo.png",
+  "icon": "icon.png"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "QuakeHub",
+  "content_in_root": false,
+  "domains": ["quakehub"],
+  "country": "GLOBAL",
+  "homeassistant": "2024.1.0",
+  "render_readme": true
+}
