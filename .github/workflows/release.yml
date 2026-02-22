@@ -1,19 +1,58 @@
-name: Create Release
+name: Automatic Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Create Release
+      # 1. Bump version and create tag
+      - name: Bump version and create tag
+        id: bump
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          WITH_V: true
+
+      # 2. Generate changelog BEFORE creating the release
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v4.1.0
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Update manifest.json version
+      - name: Update manifest.json version
+        run: |
+          VERSION=${{ steps.bump.outputs.new_tag }}
+          CLEAN_VERSION=${VERSION#v}
+          sed -i "s/\"version\": \".*\"/\"version\": \"${CLEAN_VERSION}\"/" custom_components/quakehub/manifest.json
+
+      # 4. Commit updated manifest.json
+      - name: Commit updated manifest
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add custom_components/quakehub/manifest.json
+          git commit -m "Update manifest version to ${{ steps.bump.outputs.new_tag }}" || echo "No changes to commit"
+          git push
+
+      # 5. Create GitHub Release with generated changelog
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          tag_name: ${{ steps.bump.outputs.new_tag }}
+          body: ${{ steps.changelog.outputs.changelog }}
