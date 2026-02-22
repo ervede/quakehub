@@ -164,4 +164,4 @@ Examples:
 # 📜 License
 
 QuakeHub is released under the **MIT License**.
-
+---
