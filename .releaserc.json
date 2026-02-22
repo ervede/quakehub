@@ -1,14 +1,42 @@
 {
   "branches": ["main"],
   "plugins": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits",
+        "presetConfig": {
+          "types": [
+            { "type": "feat", "section": "🚀 New Features" },
+            { "type": "enhancement", "section": "🚀 New Features" },
+            { "type": "fix", "section": "🐛 Bug Fixes" },
+            { "type": "bug", "section": "🐛 Bug Fixes" },
+            { "type": "chore", "section": "🧹 Maintenance" },
+            { "type": "refactor", "section": "🧹 Maintenance" },
+            { "type": "cleanup", "section": "🧹 Maintenance" },
+            { "type": "docs", "section": "📚 Documentation" },
+            { "type": "style", "section": "🔧 Other Changes" },
+            { "type": "perf", "section": "🔧 Other Changes" },
+            { "type": "test", "section": "🔧 Other Changes" }
+          ]
+        }
+      }
+    ],
     "@semantic-release/changelog",
     [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md", "custom_components/quakehub/manifest.json"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        "assets": [
+          "CHANGELOG.md",
+          "custom_components/quakehub/manifest.json"
+        ],
+        "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
       }
     ],
     "@semantic-release/github"
